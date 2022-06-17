@@ -284,3 +284,51 @@ export default {
 </script>
 ```
 
+#### 父子组件数据传递
+
+```vue
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>lesson 18</title>
+  <script src="https://unpkg.com/vue@next"></script>
+</head>
+<body>
+  <div id="root"></div>
+</body>
+<script>
+  const app = Vue.createApp({
+    data() {
+      return { count: 1 }
+    },
+    methods:{
+      handleChange(val) {
+        console.log(val)
+      }
+    },
+    template: `
+      <counter :countItem="count" @change="handleChange" />
+    `
+  });
+
+  app.component('counter', {
+    props: ['countItem'],
+    emits: ['change'],
+    methods: {
+      handleClick() {
+        this.$emit('change', 9);
+      }
+    },
+    template: `
+      <div @click="handleClick">{{this.countItem}}</div>
+    `
+  });
+
+  const vm = app.mount('#root');
+</script>
+</html>
+
+```
+
