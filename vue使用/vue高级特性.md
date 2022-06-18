@@ -78,3 +78,86 @@ export default {
 </script>
 ```
 
+### slot
+
+基本使用
+
+```vue
+<!-- todo-button 组件模板 -->
+<button class="btn-primary">
+  <slot></slot>
+</button>
+
+
+<todo-button>
+  Add todo
+</todo-button>
+```
+
+作用域插槽
+
+```vue
+app.component('todo-list', {
+  data() {
+    return {
+      items: ['Feed a cat', 'Buy milk']
+    }
+  },
+  template: `
+    <ul>
+      <li v-for="( item, index ) in items">
+        <slot :item="item"></slot>
+      </li>
+    </ul>
+  `
+})
+
+
+<todo-list>
+  <template v-slot:default="slotProps">
+    <i class="fas fa-check"></i>
+    <span class="green">{{ slotProps.item }}</span>
+  </template>
+</todo-list>
+
+//当只有默认插槽时
+<todo-list v-slot="slotProps">
+  <i class="fas fa-check"></i>
+  <span class="green">{{ slotProps.item }}</span>
+</todo-list>
+
+```
+
+具名插槽
+
+```vue
+<div class="container">
+  <header>
+    <slot name="header"></slot>
+  </header>
+  <main>
+    <slot></slot>
+  </main>
+  <footer>
+    <slot name="footer"></slot>
+  </footer>
+</div>
+
+<base-layout>
+  <template v-slot:header>
+    <h1>Here might be a page title</h1>
+  </template>
+
+  <template v-slot:default>
+    <p>A paragraph for the main content.</p>
+    <p>And another one.</p>
+  </template>
+
+  <template v-slot:footer>
+    <p>Here's some contact info</p>
+  </template>
+</base-layout>
+```
+
+
+
