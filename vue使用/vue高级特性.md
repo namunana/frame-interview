@@ -372,3 +372,9 @@ mixin问题
 多个mixin可能会造成命名冲突
 
 mixin和组件可能会出现多对多的关系，复杂度较高
+
+### vuex
+
+基本概念：state 、getters、action、mutation
+
+用于Vue组件：dispatch、commit、 mapState、mapGetters、mapActions、 mapMutations
