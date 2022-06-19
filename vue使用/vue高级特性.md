@@ -208,3 +208,38 @@ app.component('tab-archive', {
 app.mount('#dynamic-component-demo')
 ```
 
+### 异步组件
+
+import()函数
+
+按需加载，异步加载大组件
+
+```vue
+<template>
+  <div>
+    <p>vue 高级特性</p>
+    <hr />
+    <!-- 异步组件 -->
+    <FormDemo v-if="showFormDemo"/>
+    <button @click="showFormDemo = true">show form demo</button>
+
+  </div>
+</template>
+
+<script>
+export default {
+  components: {
+    FormDemo: () => import('../BaseUse/FormDemo'),
+
+  },
+  data () {
+    return {
+      showFormDemo: false
+    }
+  }
+}
+</script>
+```
+
+
+
