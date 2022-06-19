@@ -159,5 +159,52 @@ app.component('todo-list', {
 </base-layout>
 ```
 
+### 动态组件
 
+is = "component-name"用法
+
+需要根据数据，动态渲染场景，即组件类型不确定
+
+```html
+<div id="dynamic-component-demo" class="demo">
+  <button
+     v-for="tab in tabs"
+     :key="tab"
+     :class="['tab-button', { active: currentTab === tab }]"
+     @click="currentTab = tab"
+   >
+    {{ tab }}
+  </button>
+
+  <component :is="currentTabComponent" class="tab"></component>
+</div>
+```
+
+```js
+const app = Vue.createApp({
+  data() {
+    return {
+      currentTab: 'Home',
+      tabs: ['Home', 'Posts', 'Archive']
+    }
+  },
+  computed: {
+    currentTabComponent() {
+      return 'tab-' + this.currentTab.toLowerCase()
+    }
+  }
+})
+
+app.component('tab-home', {
+  template: `<div class="demo-tab">Home component</div>`
+})
+app.component('tab-posts', {
+  template: `<div"></div>`,  
+})
+app.component('tab-archive', {
+  template: `<div class="demo-tab">Archive component</div>`
+})
+
+app.mount('#dynamic-component-demo')
+```
 
