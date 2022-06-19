@@ -241,5 +241,134 @@ export default {
 </script>
 ```
 
+### keep alive
 
+缓存组件
 
+频繁切换，不需要重复渲染
+
+Vue常见性能优化
+
+```vue
+<template>
+    <div>
+        <button @click="changeState('A')">A</button>
+        <button @click="changeState('B')">B</button>
+        <button @click="changeState('C')">C</button>
+
+        <keep-alive> <!-- tab 切换 -->
+            <KeepAliveStageA v-if="state === 'A'"/> <!-- v-show -->
+            <KeepAliveStageB v-if="state === 'B'"/>
+            <KeepAliveStageC v-if="state === 'C'"/>
+        </keep-alive>
+    </div>
+</template>
+
+<script>
+import KeepAliveStageA from './KeepAliveStateA'
+import KeepAliveStageB from './KeepAliveStateB'
+import KeepAliveStageC from './KeepAliveStateC'
+
+export default {
+    components: {
+        KeepAliveStageA,
+        KeepAliveStageB,
+        KeepAliveStageC
+    },
+    data() {
+        return {
+            state: 'A'
+        }
+    },
+    methods: {
+        changeState(state) {
+            this.state = state
+        }
+    }
+}
+</script>
+
+//keepAliveStateA
+<template>
+    <p>state A</p>
+</template>
+
+<script>
+export default {
+    mounted() {
+        // eslint-disable-next-line
+        console.log('A mounted')
+    },
+    destroyed() {
+        // eslint-disable-next-line
+        console.log('A destroyed')
+    }
+}
+</script>
+```
+
+### mixin
+
+多个组件有相同的逻辑，抽离出来
+
+mixin并不是完美的解决方案，会有一些问题
+
+Vue3提出CompositionAPI旨在解决这些问题
+
+```vue
+<template>
+    <div>
+        <p>{{name}} {{major}} {{city}}</p>
+        <button @click="showName">显示姓名</button>
+    </div>
+</template>
+
+<script>
+import myMixin from './mixin'
+
+export default {
+    mixins: [myMixin], // 可以添加多个，会自动合并起来
+    data() {
+        return {
+            name: '双越',
+            major: 'web 前端'
+        }
+    },
+    methods: {
+    },
+    mounted() {
+        // eslint-disable-next-line
+        console.log('component mounted', this.name)
+    }
+}
+</script>
+
+```
+
+```js
+export default {
+    data() {
+        return {
+            city: '北京'
+        }
+    },
+    methods: {
+        showName() {
+            // eslint-disable-next-line
+            console.log(this.name)
+        }
+    },
+    mounted() {
+        // eslint-disable-next-line
+        console.log('mixin mounted', this.name)
+    }
+}
+```
+
+mixin问题
+
+变量来源不明确，不利于阅读
+
+多个mixin可能会造成命名冲突
+
+mixin和组件可能会出现多对多的关系，复杂度较高
