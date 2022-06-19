@@ -378,3 +378,17 @@ mixin和组件可能会出现多对多的关系，复杂度较高
 基本概念：state 、getters、action、mutation
 
 用于Vue组件：dispatch、commit、 mapState、mapGetters、mapActions、 mapMutations
+
+### vue-router
+
+1.路由模式（hash、H5 history）
+
+2.路由配置（动态路由、懒加载）
+
+
+
+hash模式（默认）：如 `http://abc.com/#/user/10`
+
+H5 history模式：如  `http://abc.com/user/10`
+
+后者需要server端支持，因此无特殊情况可选择前者
