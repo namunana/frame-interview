@@ -332,3 +332,28 @@ export default {
 
 ```
 
+#### 生命周期函数
+
+![smzq](../static/img/smzq.PNG)
+
+```
+在父子组件中生命周期执行顺序(f - 父,s - 子)：
+f -  beforeCreate
+f - created
+f - beforeMount
+s - beforeCreate
+s - created
+s - beforeMount
+s - mounted
+f - mounted
+f - beforeUpdate
+s - beforeUpdate
+s - updated
+f - updated
+f - beforeUnmount
+s - beforeUnmount
+s - unmounted
+f - unmounted
+
+```
+
