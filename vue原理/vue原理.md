@@ -27,3 +27,34 @@ nodejs中也有组件化
 
 
 
+### vue响应式
+
+核心API -  Object.defineProperty
+
+Object.defineProperty的一些缺点（Vue3 启用 Proxy）
+
+proxy有兼容性问题，而且无法polyfill
+
+```
+const data = {}
+const name = 'zhangsan'
+Object.defineProperty(data, "name", {
+	get: function() {
+		console.log('get')
+		return name
+	}
+	set: function() {
+		console.log('set')
+		name = newVal
+	}
+})
+
+console.log(data.name)  //get zhangsan
+data.name = 'lisi' //set
+```
+
+监听对象，监听数组
+
+复杂对象，深度监听
+
+几个缺点
