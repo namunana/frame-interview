@@ -61,7 +61,7 @@ data.name = 'lisi' //set
 
 ### 深度监听
 
-vue如何监听对象
+#### vue如何监听对象
 
 适用递归的方式可以监听对象
 
@@ -106,7 +106,7 @@ function observer(target) {
 
     // 重新定义各个属性（for in 也可以遍历数组）
     for (let key in target) {
-        defineReactive(target, key, value)
+        defineReactive(target, key, target[key])
     }
 }
 
@@ -121,5 +121,59 @@ const data = {
 
 // 监听数据
 observer(data)
+```
+
+#### vue如何监听数组
+
+```js
+// 重新定义数组原型
+const oldArrayProperty = Array.prototype
+// 创建新对象，原型指向 oldArrayProperty ，再扩展新的方法不会影响原型
+const arrProto = Object.create(oldArrayProperty);
+['push', 'pop', 'shift', 'unshift', 'splice'].forEach(methodName => {
+    arrProto[methodName] = function () {
+        oldArrayProperty[methodName].call(this, ...arguments)
+        // Array.prototype.push.call(this, ...arguments)
+        updateView() // 触发视图更新
+    }
+})
+
+// 监听对象属性
+function observer (target) {
+    if (typeof target !== 'object' || target === null) {
+        // 不是对象或数组
+        return target
+    }
+
+    // 污染全局的 Array 原型
+    // Array.prototype.push = function () {
+    //     updateView()
+    //     ...
+    // }
+
+    if (Array.isArray(target)) {
+        target.__proto__ = arrProto
+    }
+
+    // 重新定义各个属性（for in 也可以遍历数组）
+    for (let key in target) {
+        defineReactive(target, key, target[key])
+    }
+}
+
+// 准备数据
+const data = {
+    name: 'zhangsan',
+    age: 20,
+    info: {
+        address: '北京' // 需要深度监听
+    },
+    nums: [10, 20, 30]
+}
+
+// 监听数据
+observer(data)
+
+data.nums.push(4) // 监听数组
 ```
 
