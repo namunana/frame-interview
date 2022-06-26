@@ -462,3 +462,25 @@ document.getElementById('btn-change').addEventListener('click', () => {
 新旧vnode做对比，得出最小的更新范围，最后更新DOM
 
 数据驱动视图下，有效控制DOM操作
+
+### diff算法
+
+diff即对比，是一个广泛的概念，如linux diff 命令，git diff等
+
+两个js对象也可以做diff，如https://github.com/cujojs/jiff
+
+两棵树做diff，如vdom diff
+
+**树的diff算法的时间复杂度是O(n^3)**
+
+第一，遍历tree1，第二，遍历tree2，第三，排序
+
+1000个节点，要计算1亿次，算法不可用
+
+**优化时间复杂度到O(n)**
+
+只比较同一层，不跨域比较
+
+tag不相同，则直接删掉重建，不再深度比较
+
+tag和key，两者都相同，则认为是相同节点，不再深度比较
