@@ -484,3 +484,118 @@ diff即对比，是一个广泛的概念，如linux diff 命令，git diff等
 tag不相同，则直接删掉重建，不再深度比较
 
 tag和key，两者都相同，则认为是相同节点，不再深度比较
+
+### 模板编译
+
+**前置知识：JS的with语法**
+
+```js
+const obj ={a:100,b:200}
+console.log(obj.a)
+console.log(obj.b)
+console.log(obj.c) //undefined
+
+with(obj){
+	console.log(a)
+	console.log(b)
+	console.log(c) //报错
+}
+```
+
+**vue template complier将模板编译为render函数**
+
+```js
+const compiler = require('vue-template-compiler')
+
+// 插值
+// const template = `<p>{{message}}</p>`
+// with(this){return createElement('p',[createTextVNode(toString(message))])}
+// h -> vnode
+// createElement -> vnode
+
+// // 表达式
+// const template = `<p>{{flag ? message : 'no message found'}}</p>`
+// // with(this){return _c('p',[_v(_s(flag ? message : 'no message found'))])}
+
+// // 属性和动态属性
+// const template = `
+//     <div id="div1" class="container">
+//         <img :src="imgUrl"/>
+//     </div>
+// `
+// with(this){return _c('div',
+//      {staticClass:"container",attrs:{"id":"div1"}},
+//      [
+//          _c('img',{attrs:{"src":imgUrl}})])}
+
+// // 条件
+// const template = `
+//     <div>
+//         <p v-if="flag === 'a'">A</p>
+//         <p v-else>B</p>
+//     </div>
+// `
+// with(this){return _c('div',[(flag === 'a')?_c('p',[_v("A")]):_c('p',[_v("B")])])}
+
+// 循环
+// const template = `
+//     <ul>
+//         <li v-for="item in list" :key="item.id">{{item.title}}</li>
+//     </ul>
+// `
+// with(this){return _c('ul',_l((list),function(item){return _c('li',{key:item.id},[_v(_s(item.title))])}),0)}
+
+// 事件
+// const template = `
+//     <button @click="clickHandler">submit</button>
+// `
+// with(this){return _c('button',{on:{"click":clickHandler}},[_v("submit")])}
+
+// v-model
+const template = `<input type="text" v-model="name">`
+// 主要看 input 事件
+// with(this){return _c('input',{directives:[{name:"model",rawName:"v-model",value:(name),expression:"name"}],attrs:{"type":"text"},domProps:{"value":(name)},on:{"input":function($event){if($event.target.composing)return;name=$event.target.value}}})}
+
+// render 函数
+// 返回 vnode
+// patch
+
+// 编译
+const res = compiler.compile(template)
+console.log(res.render)
+
+// ---------------分割线--------------
+
+// // 从 vue 源码中找到缩写函数的含义
+// function installRenderHelpers (target) {
+//     target._o = markOnce;
+//     target._n = toNumber;
+//     target._s = toString;
+//     target._l = renderList;
+//     target._t = renderSlot;
+//     target._q = looseEqual;
+//     target._i = looseIndexOf;
+//     target._m = renderStatic;
+//     target._f = resolveFilter;
+//     target._k = checkKeyCodes;
+//     target._b = bindObjectProps;
+//     target._v = createTextVNode;
+//     target._e = createEmptyVNode;
+//     target._u = resolveScopedSlots;
+//     target._g = bindObjectListeners;
+//     target._d = bindDynamicKeys;
+//     target._p = prependModifier;
+// }
+
+```
+
+模板编译为render函数，执行render函数返回vnode
+
+基于vnode再执行patch和diff
+
+使用webpack vue-loader，会在开发环境下编译模板（重要）
+
+
+
+
+
