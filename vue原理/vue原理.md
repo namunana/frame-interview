@@ -655,6 +655,8 @@ vue-router的路由模式
 
 
 
+#### hash
+
 hash的特点
 
 hash变化会触发网页的跳转，即浏览器的前进、后退
@@ -704,5 +706,56 @@ hash永远不会提交到server端（前端自身自灭）
 </html>
 ```
 
+#### H5 history
 
+用url规范的路由，但跳转时不刷新页面
+
+history.pushState
+
+window.onpopState
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>history API test</title>
+</head>
+<body>
+    <p>history API test</p>
+    <button id="btn1">修改 url</button>
+
+    <script>
+        // 页面初次加载，获取 path
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('load', location.pathname)
+        })
+
+        // 打开一个新的路由
+        // 【注意】用 pushState 方式，浏览器不会刷新页面
+        document.getElementById('btn1').addEventListener('click', () => {
+            const state = { name: 'page1' }
+            console.log('切换路由到', 'page1')
+            history.pushState(state, '', 'page1') // 重要！！
+        })
+
+        // 监听浏览器前进、后退
+        window.onpopstate = (event) => { // 重要！！
+            console.log('onpopstate', event.state, location.pathname)
+        }
+
+        // 需要 server 端配合，可参考
+        // https://router.vuejs.org/zh/guide/essentials/history-mode.html#%E5%90%8E%E7%AB%AF%E9%85%8D%E7%BD%AE%E4%BE%8B%E5%AD%90
+    </script>
+</body>
+</html>
+```
+
+#### 两者选择
+
+1.toB的系统推荐用hash，简单易用，对url规范不敏感
+
+2.toC的系统，可以考虑用H5history，但需要服务端支持
 
