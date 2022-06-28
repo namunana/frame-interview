@@ -595,7 +595,49 @@ console.log(res.render)
 
 使用webpack vue-loader，会在开发环境下编译模板（重要）
 
+### render代替template
 
+```js
+Vue.component('heading',{
+	render:function(creatElement){
+		return createElement(
+			'h'+this.level,
+			[
+				createElement('a',{
+					attrs: {
+						name:'headerId',
+						href: '#'+'headerId'
+					}
+				}, 'this is a tag')
+			]
+		)
+	}
+})
+```
+
+### vue渲染更新过程
+
+#### 初次渲染
+
+1.解析模板为render函数（或在开发环境已完成，vue-loader）
+
+2.触发响应式，监听data属性 getter setter
+
+3.执行render函数，生成vnode, patch(elem,vnode)
+
+#### 组件更新
+
+1.修改data，触发setter(此前在getter中已被监听)
+
+2.重新执行render函数，生成newVnode
+
+3.patch(vnode,newVnode)
+
+图示：
+
+![xrgx](..\static\img\xrgx.png)
+
+#### 异步渲染
 
 
 
