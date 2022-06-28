@@ -639,5 +639,70 @@ Vue.component('heading',{
 
 #### 异步渲染
 
+$nextTick 语法就是异步渲染
+
+汇总data的修改，一次性更新视图
+
+减少DOM操作次数，提高性能
+
+### 前端路由原理
+
+vue-router的路由模式
+
+**hash**
+
+**H5 history**
+
+
+
+hash的特点
+
+hash变化会触发网页的跳转，即浏览器的前进、后退
+
+hash变化不会刷新页面，SPA必需的特点
+
+hash永远不会提交到server端（前端自身自灭）
+
+通过监听hash的变化来触发路由的跳转
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>hash test</title>
+</head>
+<body>
+    <p>hash test</p>
+    <button id="btn1">修改 hash</button>
+
+    <script>
+        // hash 变化，包括：
+        // a. JS 修改 url
+        // b. 手动修改 url 的 hash
+        // c. 浏览器前进、后退
+        window.onhashchange = (event) => {
+            console.log('old url', event.oldURL)
+            console.log('new url', event.newURL)
+
+            console.log('hash:', location.hash)
+        }
+
+        // 页面初次加载，获取 hash
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('hash:', location.hash)
+        })
+
+        // JS 修改 url
+        document.getElementById('btn1').addEventListener('click', () => {
+            location.href = '#/user'
+        })
+    </script>
+</body>
+</html>
+```
+
 
 
