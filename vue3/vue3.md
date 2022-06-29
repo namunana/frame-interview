@@ -101,3 +101,69 @@ export default {
 </script>
 ```
 
+#### CompositionAPI 对比OptionsAPI
+
+CompositionAPI 带来了什么？
+
+CompositionAPI和OptionsAPI如何选择？
+
+别误解CompositionAPI
+
+
+
+**CompositionAPI 带来了什么？**
+
+更好的代码组织
+
+![comopt](..\static\img\comopt.png)
+
+更好的逻辑复用
+
+​	可以把相同的逻辑写在一个hook函数里，只要引用函数即可
+
+更好的类型推导
+
+​	vue2中
+
+```js
+export default{
+	data(){
+		return {
+			a: 10
+		}
+	},
+	methods:{
+		fn1(){
+			const a = this.a
+			return a
+		}
+	},
+	mounted(){
+		this.fn1 //此时不能判断得到的值
+	}
+}
+```
+
+   vue3中
+
+```js
+export default{
+	setup(){
+		const {age,name} = useUser(); //通过hook函数引入变量，可以明确的知道变量
+	}
+}
+```
+
+**如何选择**
+
+不建议共用，会引起混乱
+
+小型项目、业务逻辑简单，用OptionsAPI
+
+中型项目、逻辑复杂，用CompositionAPI
+
+**别误解CompositionAPI**
+
+CompositionAPI是为了解决复杂业务逻辑设计的
+
+CompositionAPI就像Hooks在React中的地位
