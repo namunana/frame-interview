@@ -332,7 +332,7 @@ export default {
 </script>
 ```
 
-#### toRef 和 toRefs最佳使用方式
+##### toRef 和 toRefs最佳使用方式
 
 合成函数返回响应式对象
 
@@ -366,3 +366,62 @@ export defualt {
 2. setup中返回toRefs（state），或者toRef（state，"xxx"）
 3. ref的变量命名都用xxxRef
 4. 合成函数返回响应式对象
+
+#### ref、toRef和toRefs深入理解
+
+为何需要ref
+
+为何需要.value
+
+为何需要toRef toRefs
+
+##### 为何需要ref
+
+1. 返回值类型，会丢失响应式
+2. 如在setup、computed、合成函数，都有可能返回值类型
+3. Vue如不定义ref，用户将自造ref，反而混乱
+
+##### 为何需要.value
+
+ref是一个对象（不丢失响应式），value存储值
+
+通过.value属性的get和set实现响应式
+
+用于模板、reactive时不需要.value，其他情况都需要.value
+
+最主要的时值类型不具备响应式，而对象具备
+
+```js
+//仿computed对响应式处理的实现思路
+//错误的实现方式
+function computed(getter){
+	let value = 0
+	setTimeout(()=>{
+		value = getter()
+	},1500)
+	return value
+}
+a = computed(() => 100) //过了1.5秒 a = 0
+
+//正确的实现方式
+function computed(getter){
+	let ref = {
+		value:null
+	}
+	setTimeout(()=>{
+		value = getter()
+	},1500)
+	return value
+}
+
+a = computed(() => 100) //过了1.5秒 a = 100
+```
+
+##### 为何需要toRef和toRefs
+
+初衷：不丢失响应式的情况下，把对象数据 **分解/扩散**（如合成函数的返回和响应式数据的返回）
+
+前提：针对的是响应式对象（reactive封装），非普通对象
+
+**不创造**响应式，而是**延续**响应式
+
