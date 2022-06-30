@@ -237,3 +237,98 @@ export default {
 </script>
 ```
 
+##### toRef
+
+针对一个响应式对象（reactive封装）的prop
+
+创建一个ref，具有响应式
+
+两者保持引用关系
+
+```vue
+<template>
+    <p>toRef demo - {{ageRef}} - {{state.name}} {{state.age}}</p>
+</template>
+
+<script>
+import { ref, toRef, reactive } from 'vue'
+
+export default {
+    name: 'ToRef',
+    setup() {
+        const state = reactive({
+            age: 20,
+            name: '双越'
+        })
+
+        const age1 = computed(() => {
+            return state.age + 1
+        })
+
+        // // toRef 如果用于普通对象（非响应式对象），产出的结果不具备响应式
+        // const state = {
+        //     age: 20,
+        //     name: '双越'
+        // }
+
+        const ageRef = toRef(state, 'age')
+
+        setTimeout(() => {
+            state.age = 25
+        }, 1500)
+
+        setTimeout(() => {
+            ageRef.value = 30 // .value 修改值
+        }, 3000)
+
+        return {
+            state,
+            ageRef
+        }
+    }
+}
+</script>
+```
+
+##### toRefs
+
+将响应式对象（reactive封装）转换为普通对象
+
+对象的每个prop都是对应的ref
+
+两者保持应用关系
+
+```vue
+<template>
+    <p>toRefs demo {{age}} {{name}}</p>
+</template>
+
+<script>
+import { ref, toRef, toRefs, reactive } from 'vue'
+
+export default {
+    name: 'ToRefs',
+    setup() {
+        const state = reactive({
+            age: 20,
+            name: '双越'
+        })
+
+        const stateAsRefs = toRefs(state) // 将响应式对象，变成普通对象
+
+        // const { age: ageRef, name: nameRef } = stateAsRefs // 每个属性，都是 ref 对象
+        // return {
+        //     ageRef,
+        //     nameRef
+        // }
+
+        setTimeout(() => {
+            state.age = 25
+        }, 1500)
+
+        return stateAsRefs
+    }
+}
+</script>
+```
+
