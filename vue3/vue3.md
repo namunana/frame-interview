@@ -332,3 +332,37 @@ export default {
 </script>
 ```
 
+#### toRef 和 toRefs最佳使用方式
+
+合成函数返回响应式对象
+
+```js
+function useFeatureX(){
+	const state = reactive({
+		x:1,
+		y:2
+	})
+	
+	return toRefs(state)
+}
+```
+
+```js
+export defualt {
+	setup(){
+		const {x,y} = useFeatureX()
+		
+		return {
+			x,
+			y
+		}
+	}
+}
+```
+
+最佳使用方式
+
+1. 用reactive做对象的响应式，用ref做值类型的响应式
+2. setup中返回toRefs（state），或者toRef（state，"xxx"）
+3. ref的变量命名都用xxxRef
+4. 合成函数返回响应式对象
