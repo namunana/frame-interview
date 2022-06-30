@@ -597,3 +597,96 @@ setup
 
 生命周期钩子函数
 
+#### CompositionAPI逻辑复用
+
+抽离逻辑代码到一个函数
+
+函数命名约定为useXxx格式（React Hooks 也是）
+
+在setup中引用useXxx函数
+
+```js
+import { reactive, ref, onMounted, onUnmounted } from 'vue'
+
+function useMousePosition() {
+    const x = ref(0)
+    const y = ref(0)
+
+    function update(e) {
+        x.value = e.pageX
+        y.value = e.pageY
+    }
+
+    onMounted(() => {
+        console.log('useMousePosition mounted')
+        window.addEventListener('mousemove', update)
+    })
+
+    onUnmounted(() => {
+        console.log('useMousePosition unMounted')
+        window.removeEventListener('mousemove', update)
+    })
+
+    return {
+        x,
+        y
+    }
+}
+
+// function useMousePosition2() {
+//     const state = reactive({
+//         x: 0,
+//         y: 0
+//     })
+
+//     function update(e) {
+//         state.x = e.pageX
+//         state.y = e.pageY
+//     }
+
+//     onMounted(() => {
+//         console.log('useMousePosition mounted')
+//         window.addEventListener('mousemove', update)
+//     })
+
+//     onUnmounted(() => {
+//         console.log('useMousePosition unMounted')
+//         window.removeEventListener('mousemove', update)
+//     })
+
+//     return state
+// }
+
+export default useMousePosition
+// export default useMousePosition2
+
+```
+
+```vue
+<template>
+    <p>mouse position {{x}} {{y}}</p>
+</template>
+
+<script>
+import { reactive } from 'vue'
+import useMousePosition from './useMousePosition'
+// import useMousePosition2 from './useMousePosition'
+
+export default {
+    name: 'MousePosition',
+    setup() {
+        const { x, y } = useMousePosition()
+        return {
+            x,
+            y
+        }
+
+        // const state = useMousePosition2()
+        // return {
+        //     state
+        // }
+    }
+}
+</script>
+```
+
