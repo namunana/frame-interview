@@ -167,3 +167,73 @@ export default{
 CompositionAPI是为了解决复杂业务逻辑设计的
 
 CompositionAPI就像Hooks在React中的地位
+
+#### ref toRef和toRefs
+
+##### ref
+
+生成值类型的响应式数据
+
+可用于模板和reactive
+
+通过.value修改值
+
+```vue
+<template>
+  <p>ref demo {{ ageRef }} {{ state.name }}</p>
+</template>
+
+<script>
+import { ref, reactive } from 'vue'
+
+export default {
+  name: 'Ref',
+  setup () {
+    const ageRef = ref(20) // 值类型 响应式
+    const nameRef = ref('namu')
+
+    const state = reactive({
+      name: nameRef
+    })
+
+    setTimeout(() => {
+      console.log('ageRef', ageRef.value)
+
+      ageRef.value = 25 // .value 修改值
+      nameRef.value = 'namunana'
+    }, 1500)
+
+    return {
+      ageRef,
+      state
+    }
+  }
+}
+</script>
+```
+
+```vue
+<template>
+    <p ref="elemRef">我是一行文字</p>
+</template>
+
+<script>
+import { ref, onMounted } from 'vue'
+
+export default {
+    name: 'RefTemplate',
+    setup() {
+        const elemRef = ref(null)
+
+        onMounted(() => {
+            console.log('ref template', elemRef.value.innerHTML, elemRef.value)
+        })
+
+        return {
+            elemRef
+        }
+    }
+}
+</script>
+```
+
