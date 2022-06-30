@@ -425,3 +425,175 @@ a = computed(() => 100) //过了1.5秒 a = 100
 
 **不创造**响应式，而是**延续**响应式
 
+#### vue3升级了哪些重要功能
+
+1. createApp
+2. emits属性
+3. 生命周期
+4. 多事件
+5. Fragment
+6. 移除.sync
+7. 异步组件的写法
+8. 移除filter
+9. Teleport
+10. Suspense
+11. CompositionAPI
+
+##### createApp
+
+```js
+//vue2.x
+const app = new Vue({})
+
+//vue3
+const app = Vue.createApp({})
+
+//vue2.x
+Vue.use()
+Vue.mixin()
+Vue.component()
+Vue.directive()
+
+//vue3
+app.use()
+app.mixin()
+app.component()
+app.directive()
+```
+
+##### emits属性
+
+```js
+<HelloWorl :msg="msg" @sayHello="sayHello"/>
+```
+
+```js
+export default{
+	name: 'HelloWorld',
+	props: {
+		msg:String
+	},
+	emits:['sayHello'],
+	setup(props,{emit}){
+		function clickHandle(){
+			emit('sayHello','abc')
+		}
+	}
+}
+```
+
+##### 多事件处理
+
+```html
+<button @click="one($event),two($event)">Submit</button>
+```
+
+##### Fragment
+
+```html
+//vue2
+<template>
+	<div class="blog-post">
+		<h3>{{title}}</h3>
+		<div v-html="content"></div>
+	</div>
+</template>
+vue3
+<template>
+    <h3>{{title}}</h3>
+    <div v-html="content"></div>
+</template>
+```
+
+##### 移除.sync
+
+```html
+//vue2
+<MyComponent v-bind:title.sync="title"/>
+//vue3
+<MyComponent v-model:title="title" />
+```
+
+##### 异步组件
+
+```js
+//vue2
+new Vue({
+	components:{
+		'my-component':()=>import('./my-async-component.vue')
+	}
+})
+//vue3
+import{createApp,defineAsyncComponent} from 'vue'
+createApp({
+	components:{
+		AsyncComponent:defineAsyncComponent(() =>
+			import('./components/AsyncComponent.vue')
+		)
+	}
+})
+```
+
+##### 移除filter
+
+```html
+//以下在vue3不可用
+{{message | capitalize}}
+
+<div v-bind:id="rawId | formatId"></div>
+```
+
+##### Teleport
+
+```html
+<button @click="modalOpen=true">Open</button>
+
+<teleport>
+	<div v-if="modalOpen">
+		<div>
+			telePort弹窗
+			<button @click="modalOpent = false">Close</button>
+		</div>
+	</div>
+</teleport>
+```
+
+##### Suspence
+
+```vue
+<template>
+  <suspense>
+    <template #default>
+      <todo-list />
+    </template>
+    <template #fallback>
+      <div>
+        Loading...
+      </div>
+    </template>
+  </suspense>
+</template>
+
+<script>
+export default {
+  components: {
+    TodoList: defineAsyncComponent(() => import('./TodoList.vue'))
+  }
+}
+</script>
+```
+
+##### CompositionAPI
+
+reactive
+
+ref相关
+
+readonly
+
+watch和watchEffect
+
+setup
+
+生命周期钩子函数
+
