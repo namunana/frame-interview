@@ -1039,3 +1039,55 @@ export default {
 </script>
 ```
 
+#### vue3为何比vue2快
+
+1. proxy响应式
+2. PatchFlag
+3. hoistStatic
+4. cacheHandler
+5. SSR优化
+6. tree-shaking
+
+##### PatchFlag
+
+静态标记
+
+编译模板时，动态节点做标记
+
+标记，分为不同类型，如TEXT PROPS
+
+diff算法时，可以区分静态节点，以及不同类型的动态节点
+
+```html
+<div>
+  <span>hello World!</span>
+  <span>{{msg}}</span>
+  <span :class="name"></span>
+  <span :id="name"></span>
+  <span :id="name" :class="nana" :msg="ui"></span>
+</div>
+```
+
+以上代码编译后
+
+```js
+import { createElementVNode as _createElementVNode, toDisplayString as _toDisplayString, normalizeClass as _normalizeClass, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+export function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (_openBlock(), _createElementBlock("div", null, [
+    _createElementVNode("span", null, "hello World!"),
+    _createElementVNode("span", null, _toDisplayString(_ctx.msg), 1 /* TEXT */),
+    _createElementVNode("span", {
+      class: _normalizeClass(_ctx.name)
+    }, null, 2 /* CLASS */),
+    _createElementVNode("span", { id: _ctx.name }, null, 8 /* PROPS */, ["id"]),
+    _createElementVNode("span", {
+      id: _ctx.name,
+      class: _normalizeClass(_ctx.nana),
+      msg: _ctx.ui
+    }, null, 10 /* CLASS, PROPS */, ["id", "msg"])
+  ]))
+}
+```
+
+编译后都会有一个静态标记，如插值表达式是1，`:class`属性是2，等，vue2是静态和动态节点都要比对，vue3只比对动态节点，即被标记了PatchFlag的节点
