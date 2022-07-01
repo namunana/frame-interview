@@ -835,3 +835,65 @@ const proxyData = reactive(data)
 
 ```
 
+优点：
+
+深度监听，性能更好
+
+可监听 新增/删除 属性
+
+可监听数组变化
+
+总结：
+
+Proxy能规避Object.defineProperty的问题
+
+Proxy无法兼容所有浏览器，无法polyfill
+
+#### v-model参数用法
+
+```vue
+<template>
+    <p>{{name}} {{age}}</p>
+
+    <user-info
+        v-model:name="name"
+        v-model:age="age"
+    ></user-info>
+</template>
+
+<script>
+import { reactive, toRefs } from 'vue'
+import UserInfo from './UserInfo.vue'
+
+export default {
+    name: 'VModel',
+    components: { UserInfo },
+    setup() {
+        const state = reactive({
+            name: '双越',
+            age: '20'
+        })
+
+        return toRefs(state)
+    }
+}
+</script>
+```
+
+```vue
+<template>
+    <input :value="name" @input="$emit('update:name', $event.target.value)"/>
+    <input :value="age" @input="$emit('update:age', $event.target.value)"/>
+</template>
+
+<script>
+export default {
+    name: 'UserInfo',
+    props: {
+        name: String,
+        age: String
+    }
+}
+</script>
+```
+
