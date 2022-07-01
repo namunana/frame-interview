@@ -897,3 +897,102 @@ export default {
 </script>
 ```
 
+#### watch 和watchEffect的区别
+
+两者都可以监听data属性的变化
+
+watch需要明确监听哪个属性，watch只有数据变化的时候才会执行
+
+watchEffect会根据其中的属性，自动监听其变化 ，watchEffect初始化的时候会执行一次（依赖收集）
+
+**watch**
+
+```vue
+<template>
+    <p>watch vs watchEffect</p>
+    <p>{{numberRef}}</p>
+    <p>{{name}} {{age}}</p>
+</template>
+
+<script>
+import { reactive, ref, toRefs, watch, watchEffect } from 'vue'
+
+export default {
+    name: 'Watch',
+    setup() {
+        const numberRef = ref(100)
+        const state = reactive({
+            name: '双越',
+            age: 20
+        })
+        
+
+		watch(numberRef, (newNumber, oldNumber) => {
+            console.log('ref watch', newNumber, oldNumber)
+        }
+        // , {
+        //     immediate: true // 初始化之前就监听，可选
+        // }
+        )
+
+        setTimeout(() => {
+            numberRef.value = 200
+        }, 1500)
+
+        watch(
+            // 第一个参数，确定要监听哪个属性
+            () => state.age,
+
+            // 第二个参数，回调函数
+            (newAge, oldAge) => {
+                console.log('state watch', newAge, oldAge)
+            },
+
+            // 第三个参数，配置项
+            {
+                immediate: true, // 初始化之前就监听，可选
+                // deep: true // 深度监听
+            }
+        )
+
+        setTimeout(() => {
+            state.age = 25
+        }, 1500)
+        setTimeout(() => {
+            state.name = '双越A'
+        }, 3000)
+
+        return {
+            numberRef,
+            ...toRefs(state)
+        }
+    }
+}
+</script>
+```
+
+**watchEffect**
+
+```js
+watchEffect(() => {
+    // 初始化时，一定会执行一次（收集要监听的数据）
+    console.log('hello watchEffect')
+})
+watchEffect(() => {
+    console.log('state.name', state.name)
+})
+watchEffect(() => {
+    console.log('state.age', state.age)
+})
+watchEffect(() => {
+    console.log('state.age', state.age)
+    console.log('state.name', state.name)
+})
+setTimeout(() => {
+    state.age = 25
+}, 1500)
+setTimeout(() => {
+    state.name = '双越A'
+}, 3000)
+```
+
