@@ -996,3 +996,46 @@ setTimeout(() => {
 }, 3000)
 ```
 
+#### setup中如何获取组件实例
+
+在setup和其他CompositionAPI中没有this
+
+可通过getCurrentInstance获取组件实例
+
+若使用OptionsAPI可以照常使用this
+
+```vue
+<template>
+    <p>get instance</p>
+</template>
+
+<script>
+import { onMounted, getCurrentInstance } from 'vue'
+
+export default {
+    name: 'GetInstance',
+    data() {
+        return {
+            x: 1,
+            y: 2
+        }
+    },
+    setup() {
+        console.log('this1', this)
+
+        onMounted(() => {
+            console.log('this in onMounted', this)
+            console.log('x', instance.data.x)
+        })
+
+        const instance = getCurrentInstance()
+        console.log('instance', instance)
+    },
+    mounted() {
+        console.log('this2', this)
+        console.log('y', this.y)
+    }
+}
+</script>
+```
+
