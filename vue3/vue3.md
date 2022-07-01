@@ -690,3 +690,148 @@ export default {
 </script>
 ```
 
+#### proxy实现响应式
+
+**Object.defineProperty的缺点**
+
+深度监听需要一次性递归
+
+无法监听新增属性/删除属性（Vue.set  Vue.delete）
+
+无法原生监听数组，需要特殊处理
+
+**Proxy实现响应式**
+
+基本使用
+
+Reflect语法
+
+实现响应式
+
+```js
+// const data = {
+//     name: 'zhangsan',
+//     age: 20,
+// }
+const data = ['a', 'b', 'c']
+
+const proxyData = new Proxy(data, {
+    get(target, key, receiver) {
+        // 只处理本身（非原型的）属性
+        const ownKeys = Reflect.ownKeys(target)
+        if (ownKeys.includes(key)) {
+            console.log('get', key) // 监听
+        }
+
+        const result = Reflect.get(target, key, receiver)
+        return result // 返回结果
+    },
+    set(target, key, val, receiver) {
+        // 重复的数据，不处理
+        if (val === target[key]) {
+            return true
+        }
+
+        const result = Reflect.set(target, key, val, receiver)
+        console.log('set', key, val)
+        // console.log('result', result) // true
+        return result // 是否设置成功
+    },
+    deleteProperty(target, key) {
+        const result = Reflect.deleteProperty(target, key)
+        console.log('delete property', key)
+        // console.log('result', result) // true
+        return result // 是否删除成功
+    }
+})
+
+
+```
+
+**Reflect作用**
+
+和Proxy能力——对应
+
+规范化、标准化、函数式
+
+代替Object上的工具函数
+
+```js
+// 创建响应式
+function reactive (target = {}) {
+    if (typeof target !== 'object' || target == null) {
+        console.log("不是数组或对象")
+        // 不是对象或数组，则返回
+        return target
+    }
+
+    // 代理配置
+    const proxyConf = {
+        get (target, key, receiver) {
+            // 只处理本身（非原型的）属性
+            const ownKeys = Reflect.ownKeys(target)
+            if (ownKeys.includes(key)) {
+                console.log('get', key) // 监听
+            }
+
+            const result = Reflect.get(target, key, receiver)
+            console.log("result", result)
+
+            // 深度监听
+            // 性能如何提升的？
+            return reactive(result)
+        },
+        set (target, key, val, receiver) {
+            // 重复的数据，不处理
+            if (val === target[key]) {
+                return true
+            }
+
+            const ownKeys = Reflect.ownKeys(target)
+            if (ownKeys.includes(key)) {
+                console.log('已有的 key', key)
+            } else {
+                console.log('新增的 key', key)
+            }
+
+            const result = Reflect.set(target, key, val, receiver)
+            console.log('set', key, val)
+            // console.log('result', result) // true
+            return result // 是否设置成功
+        },
+        deleteProperty (target, key) {
+            const result = Reflect.deleteProperty(target, key)
+            console.log('delete property', key)
+            // console.log('result', result) // true
+            return result // 是否删除成功
+        }
+    }
+
+    // 生成代理对象
+    const observed = new Proxy(target, proxyConf)
+    console.log("observed", observed)
+    return observed
+}
+
+// 测试数据
+const data = {
+    name: 'zhangsan',
+    age: 20,
+    info: {
+        city: 'beijing',
+        a: {
+            b: {
+                c: {
+                    d: {
+                        e: 100
+                    }
+                }
+            }
+        }
+    }
+}
+
+const proxyData = reactive(data)
+
+```
+
