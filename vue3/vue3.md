@@ -1257,3 +1257,10 @@ export function render(_ctx, _cache, $props, $setup, $data, $options) {
 开发环境下使用ES6 Module，无需打包 ————非常快
 
 生产环境下使用rollup，并不会快很多
+
+#### CompositionAPI 和 React Hooks对比
+
+1. 前者setup只会被调用一次，而后者函数会被多次调用
+2. 前者无需使用useMemo useCallBack，因为只会被调用一次
+3. 前者无需顾虑调用顺序，而后者需要保证hooks的顺序一致
+4. 前者reactive + ref比后者useState，要难理解
