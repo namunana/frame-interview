@@ -1244,3 +1244,16 @@ export function render(_ctx, _cache, $props, $setup, $data, $options) {
 // Check the console for the AST
 ```
 
+#### Vite是什么
+
+一个前端打包工具，Vue作者发起的项目
+
+借助Vue的影响力，发展较块，和webpack竞争
+
+优势：开发环境下无需打包，启动快
+
+**vite为何启动快？**
+
+开发环境下使用ES6 Module，无需打包 ————非常快
+
+生产环境下使用rollup，并不会快很多
