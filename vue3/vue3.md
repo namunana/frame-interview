@@ -1184,3 +1184,63 @@ export function render(_ctx, _cache, $props, $setup, $data, $options) {
 //先读取缓存里的时间，如果有，直接使用，如果没有，会自定义一个时间到缓存用于下次读取
 ```
 
+##### SSR优化
+
+静态节点直接输出，绕过vdom
+
+动态节点，还是需要动态渲染
+
+```html
+<div>
+  <span>hello vue3</span>
+  <span>hello vue3</span>
+  <span>hello vue3</span>
+  <span>{{msg}}</span>
+</div>
+```
+
+编译后
+
+```js
+import { mergeProps as _mergeProps } from "vue"
+import { ssrRenderAttrs as _ssrRenderAttrs, ssrInterpolate as _ssrInterpolate } from "vue/server-renderer"
+
+export function ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $options) {
+  const _cssVars = { style: { color: _ctx.color }}
+  _push(`<div${
+    _ssrRenderAttrs(_mergeProps(_attrs, _cssVars))
+  }><span>hello vue3</span><span>hello vue3</span><span>hello vue3</span><span>${
+    _ssrInterpolate(_ctx.msg)
+  }</span></div>`)
+}
+
+// Check the console for the AST
+```
+
+##### tree shaking
+
+编译时，根据不同情况，引入不同的API
+
+```html
+<div>
+  <span @click="home">hello vue3</span>
+  <span>{{msg}}</span>
+</div>
+```
+
+编译后
+
+```js
+//根据指定自动引入不同的API
+import { createElementVNode as _createElementVNode, toDisplayString as _toDisplayString, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+export function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (_openBlock(), _createElementBlock("div", null, [
+    _createElementVNode("span", { onClick: _ctx.home }, "hello vue3", 8 /* PROPS */, ["onClick"]),
+    _createElementVNode("span", null, _toDisplayString(_ctx.msg), 1 /* TEXT */)
+  ]))
+}
+
+// Check the console for the AST
+```
+
