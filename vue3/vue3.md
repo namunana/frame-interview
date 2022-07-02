@@ -1091,3 +1091,96 @@ export function render(_ctx, _cache, $props, $setup, $data, $options) {
 ```
 
 编译后都会有一个静态标记，如插值表达式是1，`:class`属性是2，等，vue2是静态和动态节点都要比对，vue3只比对动态节点，即被标记了PatchFlag的节点
+
+##### hoistStatic
+
+将静态节点的定义，提升到父作用域，缓存起来
+
+多个相邻的静态节点，会被合并起来
+
+典型的拿空间换时间的优化策略
+
+```html
+<div>
+  <span>hello vue3</span>
+  <span>hello vue3</span>
+  <span>hello vue3</span>
+  <span>hello vue3</span>
+  <span>hello vue3</span>
+  <span>hello vue3</span>
+  <span>hello vue3</span>
+</div>
+```
+
+经过编译后
+
+```js
+import { createElementVNode as _createElementVNode, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+const _hoisted_1 = /*#__PURE__*/_createElementVNode("span", null, "hello vue3", -1 /* HOISTED */)
+const _hoisted_2 = /*#__PURE__*/_createElementVNode("span", null, "hello vue3", -1 /* HOISTED */)
+const _hoisted_3 = /*#__PURE__*/_createElementVNode("span", null, "hello vue3", -1 /* HOISTED */)
+const _hoisted_4 = /*#__PURE__*/_createElementVNode("span", null, "hello vue3", -1 /* HOISTED */)
+const _hoisted_5 = /*#__PURE__*/_createElementVNode("span", null, "hello vue3", -1 /* HOISTED */)
+const _hoisted_6 = /*#__PURE__*/_createElementVNode("span", null, "hello vue3", -1 /* HOISTED */)
+const _hoisted_7 = /*#__PURE__*/_createElementVNode("span", null, "hello vue3", -1 /* HOISTED */)
+const _hoisted_8 = [
+  _hoisted_1,
+  _hoisted_2,
+  _hoisted_3,
+  _hoisted_4,
+  _hoisted_5,
+  _hoisted_6,
+  _hoisted_7
+]
+
+export function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (_openBlock(), _createElementBlock("div", null, _hoisted_8))
+}
+```
+
+多个相邻静态节点合并
+
+```js
+import { createElementVNode as _createElementVNode, createStaticVNode as _createStaticVNode, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+const _hoisted_1 = /*#__PURE__*/_createStaticVNode("<span>hello vue3</span><span>hello vue3</span><span>hello vue3</span><span>hello vue3</span><span>hello vue3</span><span>hello vue3</span><span>hello vue3</span><span>hello vue3</span><span>hello vue3</span><span>hello vue3</span><span>hello vue3</span><span>hello vue3</span><span>hello vue3</span><span>hello vue3</span>", 14)
+const _hoisted_15 = [
+  _hoisted_1
+]
+
+export function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (_openBlock(), _createElementBlock("div", null, _hoisted_15))
+}
+
+// Check the console for the AST
+```
+
+##### cacheHandler
+
+缓存时间
+
+```html
+<div>
+  <span v-on:click="handleClick">hello vue3</span>
+</div>
+```
+
+编译后
+
+```js
+import { createElementVNode as _createElementVNode, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+export function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (_openBlock(), _createElementBlock("div", null, [
+    _createElementVNode("span", {
+      onClick: _cache[0] || (_cache[0] = (...args) => (_ctx.handleClick && _ctx.handleClick(...args)))
+    }, "hello vue3")
+  ]))
+}
+
+// Check the console for the AST
+
+//先读取缓存里的时间，如果有，直接使用，如果没有，会自定义一个时间到缓存用于下次读取
+```
+
