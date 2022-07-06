@@ -231,3 +231,79 @@ export default defineComponent({
 })
 ```
 
+#### template和jsx实现作用域插槽对比
+
+template:
+
+```vue
+<template>
+    <child>
+        <!-- <p>scoped slot</p> -->
+
+        <template v-slot:default="slotProps">
+            <p>msg: {{slotProps.msg}} 123123</p>
+        </template>
+    </child>
+</template>
+
+<script>
+import Child from './Child'
+
+export default {
+    components: { Child }
+}
+</script>
+```
+
+```vue
+<template>
+    <p>child</p>
+    <slot :msg="msg"></slot>
+</template>
+
+<script>
+export default {
+    data() {
+        return {
+            msg: '作用域插槽 Child'
+        }
+    }
+}
+</script>
+```
+
+jsx:
+
+```jsx
+import { defineComponent } from 'vue'
+import Child from './Child'
+
+export default defineComponent(() => {
+    function render(msg) {
+        return <p>msg: {msg} 123123</p>
+    }
+
+    return () => {
+        return <>
+            <p>Demo - JSX</p>
+            <Child render={render}></Child>
+        </>
+    }
+})
+```
+
+```jsx
+import { defineComponent, ref } from 'vue'
+
+export default defineComponent({
+    props: ['render'],
+    setup(props) {
+        const msgRef = ref('作用域插槽 Child - JSX')
+
+        return () => {
+            return <p>{props.render(msgRef.value)}</p>
+        }
+    }
+})
+```
+
