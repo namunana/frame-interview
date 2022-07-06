@@ -315,5 +315,108 @@ jsx和template的区别
 
 jsx和slot
 
+### vue3 和 script-setup
 
+#### 基本使用：
+
+顶级变量、自定义组件，可以直接用于模板
+
+可以正常使用ref reactive computed等能力
+
+和其他`<script>`同时使用
+
+注意：vue版本必须 > 3.2
+
+```vue
+<script>
+function add(a, b) { return a + b }
+</script>
+
+<script setup>
+import { ref, reactive, toRefs } from 'vue'
+import Child1 from './Child1'
+
+
+const countRef = ref(100)
+
+function addCount() {
+    countRef.value++
+}
+
+const state = reactive({
+    name: '双越'
+})
+const { name } = toRefs(state)
+
+console.log( add(10, 20) )
+
+</script>
+
+<template>
+    <p @click="addCount">{{countRef}}</p>
+    <p>{{name}}</p>
+    <child-1></child-1>
+</template>
+```
+
+```vue
+<script setup>
+</script>
+
+<template>
+    <p>Child1</p>
+</template>
+
+```
+
+#### 属性和事件
+
+通过 defineProps, defineEmits 来定义属性和事件
+
+```vue
+<script setup>
+import { defineProps, defineEmits } from 'vue'
+
+// 定义属性
+const props = defineProps({
+    name: String,
+    age: Number
+})
+
+// 定义事件
+const emit = defineEmits(['change', 'delete'])
+function deleteHandler() {
+    emit('delete', 'aaa')
+}
+
+</script>
+
+<template>
+    <p>Child2 - name: {{props.name}}, age: {{props.age}}</p>
+    <button @click="$emit('change', 'bbb')">change</button>
+    <button @click="deleteHandler">delete</button>
+</template>
+```
+
+```vue
+<script setup>
+import Child2 from './Child2'
+
+function onChange(info) {
+    console.log('on change', info)
+}
+function onDelete(info) {
+    console.log('on delete', info)
+}
+
+
+</script>
+
+<template>
+
+
+    <child-2 :name="name" :age="countRef" @change="onChange" @delete="onDelete"></child-2>
+    <hr>
+</template>
+```
 
