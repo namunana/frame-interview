@@ -307,3 +307,13 @@ export default defineComponent({
 })
 ```
 
+#### 总结：
+
+vue3中jsx的基本应用
+
+jsx和template的区别
+
+jsx和slot
+
+
+
