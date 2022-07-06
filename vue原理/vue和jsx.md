@@ -420,3 +420,56 @@ function onDelete(info) {
 </template>
 ```
 
+#### 暴露组件信息
+
+通过defineExpose属性暴露
+
+```vue
+<script setup>
+import { ref, defineExpose } from 'vue'
+
+const a = ref(101)
+const b = 201
+
+defineExpose({
+    a,
+    b
+})
+
+</script>
+
+<template>
+    <p>Child3</p>
+</template>
+```
+
+```vue
+<script setup>
+import { ref, onMounted } from 'vue'
+
+import Child3 from './Child3'
+
+
+const child3Ref = ref(null)
+onMounted(() => {
+    // 拿到 Child3 组件的一些数据
+    console.log(child3Ref.value)
+    console.log(child3Ref.value.a)
+    console.log(child3Ref.value.b)
+})
+
+</script>
+
+<template>
+    <child-3 ref="child3Ref"></child-3>
+</template>
+
+```
+
+#### 总结：
+
+基本使用 `<script>`写在`<template>`前面
+
+定义属性defineProps，定义事件defineEmits
+
+defineExpose暴露数据给父组件
