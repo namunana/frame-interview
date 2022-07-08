@@ -115,7 +115,7 @@ CompositionAPI和OptionsAPI如何选择？
 
 更好的代码组织
 
-![comopt](..\static\img\comopt.png)
+![comopt](../static/img/comopt.png)
 
 更好的逻辑复用
 

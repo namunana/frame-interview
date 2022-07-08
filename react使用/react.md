@@ -266,4 +266,4 @@ export default EventDemo
 
 react16和17event绑定元素的区别（event.nativeEvent.currentTarget）
 
-![reactevent](..\static\img\reactevent.png)
+![reactevent](../static/img/reactevent.png)

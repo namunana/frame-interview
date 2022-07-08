@@ -23,7 +23,7 @@ nodejs中也有组件化
 
 数据驱动视图 - Vue MVVM 和 React setState
 
-![mvvm](..\static\img\mvvm.png)
+![mvvm](../static/img/mvvm.png)
 
 
 
@@ -635,7 +635,7 @@ Vue.component('heading',{
 
 图示：
 
-![xrgx](..\static\img\xrgx.png)
+![xrgx](../static/img/xrgx.png)
 
 #### 异步渲染
 
