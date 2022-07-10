@@ -519,3 +519,65 @@ this.setState({
 
 ```
 
+#### 可能是异步，可能是同步
+
+```js
+import React from 'react'
+
+// 函数组件（后面会讲），默认没有 state
+class StateDemo extends React.Component {
+    constructor(props) {
+        super(props)
+
+        // 第一，state 要在构造函数中定义
+        this.state = {
+            count: 0
+        }
+    }
+    render () {
+        return <div>
+            <p>{this.state.count}</p>
+            <button onClick={this.increase}>累加</button>
+        </div>
+    }
+    increase = () => {
+        // 第三，setState 可能是异步更新（有可能是同步更新） ----------------------------
+
+        this.setState({
+            count: this.state.count + 1
+        }, () => {
+            // 联想 Vue $nextTick - DOM
+            console.log('count by callback', this.state.count) // 回调函数中可以拿到最新的 state
+        })
+        console.log('count', this.state.count) // 异步的，拿不到最新值
+
+        // setTimeout 中 setState 是同步的
+        setTimeout(() => {
+            this.setState({
+                count: this.state.count + 1
+            })
+            console.log('count in setTimeout', this.state.count)
+        }, 0)
+
+        // 自己定义的 DOM 事件，setState 是同步的。再 componentDidMount 中
+    }
+    bodyClickHandler = () => {
+        this.setState({
+            count: this.state.count + 1
+        })
+        console.log('count in body event', this.state.count)
+    }
+    componentDidMount() {
+        // 自己定义的 DOM 事件，setState 是同步的
+        document.body.addEventListener('click', this.bodyClickHandler)
+    }
+    componentWillUnmount() {
+        // 及时销毁自定义 DOM 事件
+        document.body.removeEventListener('click', this.bodyClickHandler)
+        // clearTimeout
+    }
+}
+
+export default StateDemo
+```
+
