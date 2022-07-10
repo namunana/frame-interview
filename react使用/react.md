@@ -639,3 +639,6 @@ export default StateDemo
 
 ```
 
+### 生命周期
+
+![reactsmzq](C:../static/img/reactsmzq.PNG)
