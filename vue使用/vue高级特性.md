@@ -96,6 +96,8 @@ export default {
 
 作用域插槽
 
+子组件用父组件传递的数据
+
 ```vue
 app.component('todo-list', {
   data() {
