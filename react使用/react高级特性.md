@@ -54,3 +54,72 @@ function List1 (props) {
 export default List
 ```
 
+### 非受控组件
+
+1. ref
+2. defaultValue  defaultChecked
+3. 手动操作DOM元素
+
+state只完成初始化操作，input改变值，state的值不会随之改变
+
+```js
+import React from 'react'
+
+class App extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            name: 'namu',
+            flag: true,
+        }
+        this.nameInputRef = React.createRef() // 创建 ref
+        this.fileInputRef = React.createRef()
+    }
+    render() {
+        // input defaultValue
+        return <div>
+            {/* 使用 defaultValue 而不是 value ，使用 ref */}
+            <input defaultValue={this.state.name} ref={this.nameInputRef}/>
+            {/* state 并不会随着改变 */}
+            <span>state.name: {this.state.name}</span>
+            <br/>
+            <button onClick={this.alertName}>alert name</button>
+        </div>
+
+        // // checkbox defaultChecked
+        // return <div>
+        //     <input
+        //         type="checkbox"
+        //         defaultChecked={this.state.flag}
+        //     />
+        // </div>
+
+        // file
+        // return <div>
+        //     <input type="file" ref={this.fileInputRef}/>
+        //     <button onClick={this.alertFile}>alert file</button>
+        // </div>
+
+    }
+    alertName = () => {
+        const elem = this.nameInputRef.current // 通过 ref 获取 DOM 节点
+        alert(elem.value) // 不是 this.state.name
+    }
+    alertFile = () => {
+        const elem = this.fileInputRef.current // 通过 ref 获取 DOM 节点
+        alert(elem.files[0].name)
+    }
+}
+
+export default App
+
+```
+
+非受控组件使用场景
+
+必须手动操作DOM元素，setState实现不了
+
+文件上传`<input type="file"> `
+
+某些富文本编辑器，需要传入DOM
+
