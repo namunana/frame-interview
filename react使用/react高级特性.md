@@ -123,3 +123,46 @@ export default App
 
 某些富文本编辑器，需要传入DOM
 
+### portals
+
+组件默认会按照既定层次嵌套渲染
+
+如何让组件渲染到父组件以外
+
+```js
+import React from 'react'
+import ReactDOM from 'react-dom'
+import './style.css'
+
+class App extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+        }
+    }
+    render() {
+        // // 正常渲染
+        // return <div className="modal">
+        //     {this.props.children} {/* vue slot */}
+        // </div>
+
+        // 使用 Portals 渲染到 body 上。
+        // fixed 元素要放在 body 上，有更好的浏览器兼容性。
+        return ReactDOM.createPortal(
+            <div className="modal">{this.props.children}</div>,
+            document.body // DOM 节点
+        )
+    }
+}
+
+export default App
+
+```
+
+portals使用场景
+
+overflow: hidden （父组件设置了bfc，子组件想脱离bfc）
+
+父组件z-index值太小
+
+fixed需要放在body第一层
