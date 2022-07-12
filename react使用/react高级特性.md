@@ -565,3 +565,10 @@ export default App
 
 ```
 
+#### 对比
+
+HOC：模式简单，但会增加组件的层级
+
+Render Props：代码简洁，学习成本高
+
+按需使用
