@@ -422,3 +422,29 @@ SCU默认返回true，即React默认重新渲染所有子组件
 
 可先不用SCU，有性能问题时再考虑使用
 
+#### PureComponent 和memo
+
+PureComponent，SCU中实现了浅比较
+
+memo，函数组件中PureComponent
+
+浅比较已经适用大部分情况（尽量不要做深比较）
+
+```js
+class List extends React.PureComponent {
+    constructor(props) {
+        super(props)
+    }
+    render() {
+        const { list } = this.props
+
+        return <ul>{list.map((item, index) => {
+            return <li key={item.id}>
+                <span>{item.title}</span>
+            </li>
+        })}</ul>
+    }
+    shouldComponentUpdate() {/*浅比较*/}
+}
+```
+
