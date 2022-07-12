@@ -454,3 +454,60 @@ class List extends React.PureComponent {
 
 基于共享数据（不是深拷贝），速度快
 
+### 组件公共抽离逻辑
+
+mixin，已被React弃用
+
+高阶组件HOC
+
+Render Props
+
+#### 高阶组件HOC
+
+传入一个组件，通过另一个组件加工过后返回，而这个加工组件就是高阶组件
+
+```js
+import React from 'react'
+
+// 高阶组件
+const withMouse = (Component) => {
+    class withMouseComponent extends React.Component {
+        constructor(props) {
+            super(props)
+            this.state = { x: 0, y: 0 }
+        }
+  
+        handleMouseMove = (event) => {
+            this.setState({
+                x: event.clientX,
+                y: event.clientY
+            })
+        }
+  
+        render() {
+            return (
+                <div style={{ height: '500px' }} onMouseMove={this.handleMouseMove}>
+                    {/* 1. 透传所有 props 2. 增加 mouse 属性 */}
+                    <Component {...this.props} mouse={this.state}/>
+                </div>
+            )
+        }
+    }
+    return withMouseComponent
+}
+
+const App = (props) => {
+    const a = props.a
+    const { x, y } = props.mouse // 接收 mouse 属性
+    return (
+        <div style={{ height: '500px' }}>
+            <h1>The mouse position is ({x}, {y})</h1>
+            <p>{a}</p>
+        </div>
+    )
+}
+
+export default withMouse(App) // 返回高阶函数
+
+```
+
