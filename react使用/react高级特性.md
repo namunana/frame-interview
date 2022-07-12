@@ -448,3 +448,9 @@ class List extends React.PureComponent {
 }
 ```
 
+#### immutable.js
+
+彻底拥抱“不可变值”
+
+基于共享数据（不是深拷贝），速度快
+
