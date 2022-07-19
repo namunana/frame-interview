@@ -90,3 +90,61 @@ const imgName = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React
 }, /*#__PURE__*/React.createElement("p", null, "home")));
 ```
 
+### 合成事件机制
+
+所有事件都挂载到document上（react17之后的版本挂载到root节点上）
+
+event不是原生的，是SyntheticEvent合成事件对象
+
+和Vue事件不同，和DOM事件也不同
+
+```js
+render() {
+        // event
+        return <a href="https://imooc.com/" onClick={this.clickHandler3}>
+            click me
+        </a>
+    }
+
+// 获取 event
+    clickHandler3 = (event) => {
+        event.preventDefault() // 阻止默认行为
+        event.stopPropagation() // 阻止冒泡
+        console.log('target', event.target) // 指向当前元素，即当前元素触发
+        console.log('current target', event.currentTarget) // 指向当前元素，假象！！！
+
+        // 注意，event 其实是 React 封装的。可以看 __proto__.constructor 是 SyntheticEvent 组合事件
+        console.log('event', event) // 不是原生的 Event ，原生的 MouseEvent
+        console.log('event.__proto__.constructor', event.__proto__.constructor)
+
+        // 原生 event 如下。其 __proto__.constructor 是 MouseEvent
+        console.log('nativeEvent', event.nativeEvent)
+        console.log('nativeEvent target', event.nativeEvent.target)  // 指向当前元素，即当前元素触发
+        console.log('nativeEvent current target', event.nativeEvent.currentTarget) // 指向 document 
+
+        // 1. event 是 SyntheticEvent ，模拟出来 DOM 事件所有能力
+        // 2. event.nativeEvent 是原生事件对象
+        // 3. 所有的事件，都被挂载到 document 上
+        // 4. 和 DOM 事件不一样，和 Vue 事件也不一样
+    }
+```
+
+合成事件机制图示
+
+![reacthcsj](../static/img/reacthcsj.png)
+
+**为什么要用合成事件机制？**
+
+更好的兼容性和跨平台
+
+挂载到document上（17以后版本是root节点），减少内存消耗，避免频繁解绑
+
+方便事件的统一管理（事务机制）
+
+**React17事件绑定到root**
+
+react16绑定到document上
+
+react17事件绑定到root组件上
+
+有利于多个react版本并存
