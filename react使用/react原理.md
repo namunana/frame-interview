@@ -148,3 +148,119 @@ react16绑定到document上
 react17事件绑定到root组件上
 
 有利于多个react版本并存
+
+### setState 和batchUpdate
+
+#### setState
+
+有时异步（普通对象），有时同步（setTimeout、DOM事件）
+
+有时合并（对象形式），有时不合并（函数形式）
+
+后者比较好理解（Object.assign）
+
+#### batchUpdate
+
+![reactsetstate](C:../static/img/reactsetstate.png)
+
+
+
+调用this.setState时会判断是否处于batch update机制中（通过一个标识字段isBatchUpdates = true），如果处于，则走异步更新，否则走右边分支的同步更新
+
+图示左边分支示例
+
+```js
+increase = () => {   
+    //开始 isBatchUpdates = true
+        this.setState({
+            count: this.state.count + 1
+        }, () => {
+            // 联想 Vue $nextTick - DOM
+            console.log('count by callback', this.state.count) // 回调函数中可以拿到最新的 state
+        })
+        console.log('count', this.state.count) // 异步的，拿不到最新值
+    //结束 isBatchUpdates = false
+    }
+```
+
+图示右边分支示例
+
+```js
+increase = () => {
+    	//开始 isBatchUpdates = true
+        // setTimeout 中 setState 是同步的
+        setTimeout(() => {
+          	//因为是异步，所以setTimeout里的会被最后执行，此时isBatchUpdates已经是false,所以不处于isBatchUpdate机制中
+            this.setState({
+                count: this.state.count + 1
+            })
+            console.log('count in setTimeout', this.state.count)
+        }, 0)
+    	//结束 isBatchUpdates = false
+    }
+```
+
+setState无所谓是同步还是异步
+
+看能否命中batchUpdate机制
+
+判断isBatchUpdates
+
+**哪些能够命中batchUpdate机制**
+
+生命周期函数（和它调用的函数）
+
+React中注册的事件（和它调用的函数）
+
+React可以“管理”的入口
+
+**哪些不能够命中batchUpdate机制**
+
+setTimeout、setInterval等（和它调用的函数）
+
+自定义的DOM事件（和它调用的函数）
+
+React"管不到"的入口
+
+### transation事务机制
+
+```js
+increase = () =>{
+	//开始：处于batchUpdate (batchUpdates = true)
+	
+	//其他操作
+	
+	//结束 (batchUpdates = false)
+}
+```
+
+开始会执行一系列逻辑，然后执行自己定义的逻辑，最后执行结束逻辑
+
+图示
+
+![reacttran](C:../static/img/reacttran.png)
+
+perform会传入一个自己定义的方法，然后perform帮你定义和执行了开始和结束的逻辑
+
+示例
+
+```js
+transation.initialize = function(){
+	console.log('initialize')
+}
+
+transation.close = function(){
+	console.log('close')
+}
+
+function method(){
+	console.log('abc')
+}
+
+transation.perform(method)
+
+//输出 'initialize'
+//输出 'abc'
+//输出 'close'
+```
+
