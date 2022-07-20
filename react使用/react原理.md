@@ -264,3 +264,47 @@ transation.perform(method)
 //输出 'close'
 ```
 
+### 组件渲染过程
+
+1. props   state
+2. render() 生成 vnode
+3. patch(elem，vnode)
+
+**组件更新过程**
+
+setState(newState) --> dirtyComponents(可能有子组件)
+
+render()生成newVnode
+
+patch(oldVnode,newVnode)
+
+### react-fiber如何性能优化
+
+更新的两个阶段（patch被拆分的两个阶段）:
+
+reconciliation阶段 - 执行diff算法，纯js计算
+
+commit 阶段 - 将diff结果渲染到DOM
+
+
+
+**可能有性能问题：**
+
+js是单线程，且和DOM渲染共用一个线程
+
+当组件足够复杂，组件更新时计算和渲染都压力大
+
+同时再有DOM操作需求（动画，鼠标拖拽），将卡顿
+
+
+
+**解决方案 fiber**
+
+将reconction阶段进行任务拆分（commit无法拆分）：一些组件的diff计算分成一个个子任务
+
+DOM需要渲染时暂停跟新，空闲时恢复
+
+如何知道DOM是否需要渲染，通过windows.requestIdleCallback
+
+
+
